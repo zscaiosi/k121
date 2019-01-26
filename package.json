@@ -1,0 +1,24 @@
+{
+  "name": "k121",
+  "version": "1.0.0",
+  "description": "Kenoby's software engineer test",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha testes/index.js",
+    "start": "node src/index.js"
+  },
+  "author": "Caio Saldanha",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.7"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}
