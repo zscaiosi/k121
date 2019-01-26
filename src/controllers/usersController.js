@@ -4,12 +4,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {configs} = require('../configs/configs');
 
-router.post('/register/admin', (req, res) => {
+// Functions
+
+
+// ROUTES
+router.post('/register', (req, res) => {
     const salt = bcrypt.genSaltSync(10);
 
-    if (req.headers.authorization !== "bearer poemainfo123456789") {
-        res.status(401).send('NÂO AUTORIZADO!');
-    } else if (!req.body.email || !req.body.password || !req.body.name) {
+    if (!req.body.email || !req.body.password || !req.body.name) {
         res.status(400).json({ created: false, error: 'bad JSON' });
     } else {
         UsersModel.create({
@@ -44,7 +46,6 @@ router.post('/login', (req, res) => {
                 if (result && bcrypt.compareSync(req.body.password, result[0].password)) {
                     // Generates token
                     const token = jwt.sign({ email: result[0].email }, configs().secret, { expiresIn: 360000});
-                    res.cookie('poema_token', token, { expires: new Date(Date.now() + 3600*3), httpOnly: true });
                     res.status(200).json({authenticated: true, token});
                 } else {
                     res.status(401).json({ authenticated: false, token: null, found: result.length > 0 });
