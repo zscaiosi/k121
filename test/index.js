@@ -9,5 +9,21 @@ describe('Routes', function(){
         it('Controller.users should be a Function.', function(){
             assert.isFunction(usersControllers.users);
         });
+        it('Should find the user.', function(done){
+            this.timeout(6000);
+
+            usersControllers.findByEmailAndPassword({ email: 'zscaio.si@gmail.com', password: '12839081309' }, function(error, result){
+                assert.isNull(error);
+                done();
+            });
+        });
+        it('Should create a user.', function(done){
+            this.timeout(6000);
+
+            usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '12839081309', name: 'Caio Saldanha', domains: [1] }, function(error, result){
+                assert.isNull(error);
+                done();
+            });
+        });
     });
 });
