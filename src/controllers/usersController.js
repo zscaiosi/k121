@@ -11,8 +11,8 @@ const findByEmailAndPassword = (body, cb) => {
         if (!error && result[0]) {
             // Checks login credentials
             if (result && bcrypt.compareSync(body.password, result[0].password)) {
-                // Generates token
-                const token = jwt.sign({ email: result[0].email }, configs().secret, { expiresIn: 360000});
+                // Generates token for authorization
+                const token = jwt.sign({ email: result[0].email }, configs().secret, { expiresIn: 10000000000});
                 cb(null, { authenticated: true, token });
             } else {
                 cb(401, { authenticated: false, token: null });

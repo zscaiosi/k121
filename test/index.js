@@ -14,16 +14,18 @@ describe('Routes', function(){
 
             usersControllers.findByEmailAndPassword({ email: 'zscaio.si@gmail.com', password: '12839081309' }, function(error, result){
                 assert.isNull(error);
+                assert.isString(result.token);
                 done();
             });
         });
-        it('Should create a user.', function(done){
-            this.timeout(6000);
+        // Stop creating users on tests
+        // it('Should create a user.', function(done){
+        //     this.timeout(6000);
 
-            usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '12839081309', name: 'Caio Saldanha', domains: [1] }, function(error, result){
-                assert.isNull(error);
-                done();
-            });
-        });
+        //     usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '12839081309', name: 'Caio Saldanha', domains: [1] }, function(error, result){
+        //         assert.isNull(error);
+        //         done();
+        //     });
+        // });
     });
 });
