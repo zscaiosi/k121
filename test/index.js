@@ -19,11 +19,19 @@ describe('Routes', function(){
                 done();
             });
         });
+        it('Should fetch users from domain.', function(done){
+            this.timeout(6000);
+
+            usersControllers.fetchByDomain('7Grupo 1', function(error, result){
+                assert.isNull(error);
+                done();
+            });
+        });
         // Stop creating users on tests
         // it('Should create a user.', function(done){
         //     this.timeout(6000);
 
-        //     usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '12839081309', name: 'Caio Saldanha', domains: [1] }, function(error, result){
+        //     usersControllers.createUser({ email: 'zscaio.si@test.com', password: '12839081309', name: 'Caio Saldanha', domains: ['7Grupo 1'] }, function(error, result){
         //         assert.isNull(error);
         //         done();
         //     });
@@ -42,7 +50,7 @@ describe('Routes', function(){
         it('Should Find Domain', function(done){
             this.timeout(6000);
 
-            domainsController.findDomainByName('Grupo 3', (error, result) => {
+            domainsController.findDomainByName('Grupo 1', (error, result) => {
                 console.log(result)
                 assert.isNull(error);
                 done();

@@ -44,6 +44,19 @@ const createUser = (body, cb) => {
     });
 };
 
+const fetchByDomain = (domainId, cb) => {
+    UsersModel.find({ domains: {
+        "$in": domainId
+    } }, (error, result) => {
+        console.log(error, result)
+        if (!error || result.length > 0) {
+            cb(null, result);
+        } else {
+            cb(error || 500, result);
+        }
+    });
+};
+
 // ROUTES
 router.post('/register', (req, res) => {
 
@@ -86,9 +99,23 @@ router.post('/login', (req, res) => {
     
 });
 
+router.get('findByDomain/:domainId', () => {
+    if (!req.params.domainId) {
+        res.status(400).json({ domainId: null });
+    } else {
+        fetchByDomain(req.params.domainId, (error, result) => {
+            if (error || result.length < 1) {
+                res.status(error).json(result);
+            } else {
+                res.status(200).json({ result });
+            }
+        });
+    }
+});
 
 module.exports = {
     findByEmailAndPassword,
     createUser,
+    fetchByDomain,
     users: router
 }

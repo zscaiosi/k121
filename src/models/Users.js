@@ -8,7 +8,7 @@ let UsersSchema = new mongoose.Schema({
     password: { type: String },
     createDate: Date,
     role: Number,
-    domains: Array
+    domains: [String]
 });
 
 module.exports = conn().model('Users', UsersSchema);
