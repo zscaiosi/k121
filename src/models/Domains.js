@@ -3,7 +3,7 @@ const conn = require('./DAO');
 
 let DomainSchema = new mongoose.Schema({
     _id: String,
-    domainName: String,
+    domainName: { type: String, unique: true },
     createDate: Date,
     finishDate: Date,
     played: Boolean

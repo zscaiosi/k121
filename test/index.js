@@ -1,5 +1,6 @@
 let assert = require('chai').assert;
 let usersControllers = require('../src/controllers/usersController');
+let domainsController = require('../src/controllers/domainsController');
 
 describe('Routes', function(){
     describe('Users Controllers', function(){
@@ -27,5 +28,25 @@ describe('Routes', function(){
         //         done();
         //     });
         // });
+    });
+
+    describe('Domains Controllers', function(){
+        // it('Should Create Domain', function(done){
+        //     this.timeout(6000);
+
+        //     domainsController.createDomain({ name: 'Grupo 21', finishDate: new Date('2019-12-25') }, (error, result) => {
+        //         assert.isNull(error);
+        //         done();
+        //     });
+        // });
+        it('Should Find Domain', function(done){
+            this.timeout(6000);
+
+            domainsController.findDomainByName('Grupo 3', (error, result) => {
+                console.log(result)
+                assert.isNull(error);
+                done();
+            });
+        });
     });
 });

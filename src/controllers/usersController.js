@@ -77,7 +77,7 @@ router.post('/login', (req, res) => {
             if (error) {
                 res.status(error).json(result);
             } else {
-                res.status(error).json(result);
+                res.status(200).json(result);
             }
         });
     } else {
