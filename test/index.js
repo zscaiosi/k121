@@ -1,6 +1,7 @@
 let assert = require('chai').assert;
 let usersControllers = require('../src/controllers/usersController');
 let domainsController = require('../src/controllers/domainsController');
+let gamesController = require('../src/controllers/gamesController');
 
 describe('Routes', function(){
     describe('Users Controllers', function(){
@@ -52,6 +53,26 @@ describe('Routes', function(){
 
             domainsController.findDomainByName('Grupo 1', (error, result) => {
                 console.log(result)
+                assert.isNull(error);
+                done();
+            });
+        });
+    });
+
+    describe('Games Controllers', function(){
+        
+        // it('Shuld Create Game', function(done){
+        //     this.timeout(10000);
+
+        //     gamesController.createGame({ subscribers: [], domainId: '7Grupo 7' }, (error, result) => {
+        //         assert.isNull(error);
+        //         done();
+        //     });
+        // });
+        it('Shuld Find Game by domain', function(done){
+            this.timeout(10000);
+
+            gamesController.findGameByDomainId('7Grupo 7', (error, result) => {
                 assert.isNull(error);
                 done();
             });

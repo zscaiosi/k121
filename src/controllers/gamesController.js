@@ -1,17 +1,16 @@
 const router = require('express').Router();
 const GamesModel = require('../models/Games');
 const {configs} = require('../configs/configs');
-const {}
 
 // Separeted functions for modularity's sake
 const createGame = (body, cb) => {
-    GamesModels.create({
+    GamesModel.create({
         _id: new Date().getTime(),
         played: false,
         playedDate: null,
-        subscribers: [],
+        subscribers: body.subscribers || [],
         pairs: [],
-        domain: body.domainName
+        domain: body.domainId
     }, (error, _Game) => {
         if (error) {
             cb(500, { created: false, error });
@@ -20,12 +19,23 @@ const createGame = (body, cb) => {
         }
     });
 };
-const findGameById = (_id, cb) => {
-    GamesModels.find({ _id }, (error, result) => {
+
+const findGameByDomainId = (domainId, cb) => {
+    GamesModel.find({ domain: domainId }, (error, result) => {
         if (error || result.length < 1) {
             cb(500, { result, error });
         } else {
             cb(null, { result });
+        }
+    });
+};
+
+const playGame = (domainId, cb) => {
+    GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, playedDate: new Date()}, (error, result) => {
+        if (!error || result.length > 0) {
+            cb(null, result);
+        } else {
+            cb(error, result);
         }
     });
 };
@@ -44,9 +54,9 @@ router.post('/create', (req, res) => {
     }
 });
 
-router.get('/find/:name', (req, res) => {
-    if (req.params.name) {
-        findGameByName(req.params.name, (error, result) => {
+router.get('/find/:domainId', (req, res) => {
+    if (req.params.domainId) {
+        findGameByDomainId(req.params.domainId, (error, result) => {
             if (error) {
                 res.status(error).json(result);
             } else {
@@ -54,12 +64,13 @@ router.get('/find/:name', (req, res) => {
             }
         });
     } else {
-        res.status(400).json({ name: req.params.name });
+        res.status(400).json({ domainId: req.params.domainId });
     }
 });
 
 module.exports = {
     createGame,
-    findGameById,
+    findGameByDomainId,
+    playGame,
     router
 };
