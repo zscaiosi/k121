@@ -12,7 +12,7 @@ const findByEmailAndPassword = (body, cb) => {
             // Checks login credentials
             if (result && bcrypt.compareSync(body.password, result[0].password)) {
                 // Generates token for authorization
-                const token = null;
+                let token = null;
                 if (result[0].role !== 1) {
                     token = null;
                 } else {

@@ -58,5 +58,5 @@ router.get('/find/:name', (req, res) => {
 module.exports = {
     createDomain,
     findDomainByName,
-    router
+    domains: router
 };

@@ -89,6 +89,27 @@ class MembersManager extends React.Component <any, any>{
         
     }
 
+    postAddGame(){
+
+        axios({
+            method: 'POST',
+            url: `http://localhost:3003/games/create`,
+            data: {
+                subscribers: this.state.members.map( (sub: any) => sub._id),
+                pairs: [],
+                domain: this.state.currentUser.domains[0]
+            },
+            headers: {
+                "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+            }
+        }).then( (response: any) => {
+            alert("CRIADO! Verifique teu e-mail!");
+        }).catch( (error: any) => {
+            alert('NOT CREATED: ' + JSON.stringify(error))
+        });
+        
+    }
+
     render(){
         return(
             <div className="row-center">
@@ -124,7 +145,10 @@ class MembersManager extends React.Component <any, any>{
                             }
                             <TableRow>
                                 <TableCell>
-                                    <Button onClick={(e: any) => this.setState({ creating: true })} variant="contained" color="primary">+</Button>
+                                    <Button onClick={(e: any) => this.setState({ creating: true })} variant="contained" color="primary">Adicionar Usuário</Button>
+                                </TableCell>
+                                <TableCell>
+                                    <Button onClick={(e: any) => this.postAddGame()} variant="contained" color="primary">Criar Amigo Secreto</Button>
                                 </TableCell>
                             </TableRow>
                             </TableBody>

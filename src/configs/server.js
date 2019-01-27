@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const {users} = require('../controllers/usersController');
+const {domains} = require('../controllers/domainsController');
+const {games} = require('../controllers/gamesController');
 const jwt = require('jsonwebtoken');
 const {configs} = require('../configs/configs');
 const UsersModel = require('../models/Users');
@@ -40,6 +42,8 @@ const app = () => {
     });
 
     expressApp.use('/users', users);
+    expressApp.use('/domains', domains);
+    expressApp.use('/games', games);
 
     return expressApp;
 };
