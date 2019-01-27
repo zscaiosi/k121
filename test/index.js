@@ -14,7 +14,7 @@ describe('Routes', function(){
         it('Should find the user.', function(done){
             this.timeout(6000);
 
-            usersControllers.findByEmailAndPassword({ email: 'zscaio.si@gmail.com', password: '12839081309' }, function(error, result){
+            usersControllers.findByEmailAndPassword({ email: 'zscaio.si@gmail.com', password: '123456' }, function(error, result){
                 assert.isNull(error);
                 assert.isString(result.token);
                 done();
@@ -32,7 +32,7 @@ describe('Routes', function(){
         // it('Should create a user.', function(done){
         //     this.timeout(6000);
 
-        //     usersControllers.createUser({ email: 'zscaio.si@test.com', password: '12839081309', name: 'Caio Saldanha', domains: ['7Grupo 1'] }, function(error, result){
+        //     usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '123456', name: 'Caio Saldanha', domains: ['5amigo'] }, function(error, result){
         //         assert.isNull(error);
         //         done();
         //     });
@@ -43,7 +43,7 @@ describe('Routes', function(){
         // it('Should Create Domain', function(done){
         //     this.timeout(6000);
 
-        //     domainsController.createDomain({ name: 'Grupo 21', finishDate: new Date('2019-12-25') }, (error, result) => {
+        //     domainsController.createDomain({ name: 'amigo', finishDate: new Date('2019-12-25') }, (error, result) => {
         //         assert.isNull(error);
         //         done();
         //     });
@@ -51,7 +51,7 @@ describe('Routes', function(){
         it('Should Find Domain', function(done){
             this.timeout(6000);
 
-            domainsController.findDomainByName('Grupo 1', (error, result) => {
+            domainsController.findDomainByName('amigo', (error, result) => {
                 console.log(result)
                 assert.isNull(error);
                 done();
@@ -64,7 +64,7 @@ describe('Routes', function(){
         // it('Shuld Create Game', function(done){
         //     this.timeout(10000);
 
-        //     gamesController.createGame({ subscribers: [], domainId: '7Grupo 7' }, (error, result) => {
+        //     gamesController.createGame({ subscribers: [], domainId: '5amigo' }, (error, result) => {
         //         assert.isNull(error);
         //         done();
         //     });
@@ -72,7 +72,7 @@ describe('Routes', function(){
         it('Shuld Find Game by domain', function(done){
             this.timeout(10000);
 
-            gamesController.findGameByDomainId('7Grupo 7', (error, result) => {
+            gamesController.findGameByDomainId('5amigo', (error, result) => {
                 assert.isNull(error);
                 done();
             });

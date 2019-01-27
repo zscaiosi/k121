@@ -25,9 +25,16 @@ class Login extends React.Component <any, any>{
             data: {
                 email: this.state.email,
                 password: this.state.password
+            },
+            validateStatus: function(status){
+                if (status < 200 || status >= 400) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         }).then( (response: any) => {
-            localStorage.setItem('k121auth', response.data.token);
+            localStorage.setItem('k121data', JSON.stringify(response.data));
             this.props.setStep(1);
         }).catch( (error: any) => {
             alert(JSON.stringify(error));
@@ -45,7 +52,7 @@ class Login extends React.Component <any, any>{
 
         this.setState({
             [name]: value
-        });        
+        });
     }
 
     render(){

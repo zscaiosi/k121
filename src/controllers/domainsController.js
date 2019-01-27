@@ -4,7 +4,7 @@ const DomainsModels = require('../models/Domains');
 // Separeted functions for modularity's sake
 const createDomain = (body, cb) => {
     DomainsModels.create({
-        _id: body.name.length + body.name,
+        _id: body.name,
         domainName: body.name,
         createDate: new Date(),
         finishDate: body.finishDate,
@@ -44,8 +44,8 @@ router.post('/create', (req, res) => {
 router.get('/find/:name', (req, res) => {
     if (req.params.name) {
         findDomainByName(req.params.name, (error, result) => {
-            if (error) {
-                res.status(error).json(result);
+            if (error || result.length < 1) {
+                res.status(error || 500).json(result);
             } else {
                 res.status(200).json(result);
             }
