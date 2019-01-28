@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const GamesModel = require('../models/Games');
-
+const {findById} = require('./usersController');
 // Separeted functions for modularity's sake
 const createGame = (body, cb) => {
     GamesModel.create({
@@ -64,6 +64,16 @@ const playGame = (domainId, cb) => {
         }
     });
 };
+
+async function asyncSendEmails(pairs){
+    let recipient = null;
+
+    pairs.forEach((element, index, original) => {
+        //Avoids callbacks
+        recipient = await findById();
+        // Send e-mail to recipient
+    });
+}
 // Routes
 router.post('/create', (req, res) => {
     if (req.body) {

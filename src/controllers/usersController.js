@@ -63,6 +63,18 @@ const fetchByDomain = (domainId, cb) => {
         }
     });
 };
+// Will be called by async function
+const findById = (_id) => {
+    return new Promise((resolve, reject) => {
+        UsersModel.findById(_id, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
 
 // ROUTES
 router.post('/register', (req, res) => {
@@ -155,5 +167,6 @@ module.exports = {
     findByEmailAndPassword,
     createUser,
     fetchByDomain,
+    findById,
     users: router
 }
