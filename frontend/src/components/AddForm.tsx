@@ -23,10 +23,32 @@ const AddForm = (props: any) => {
                     margin="normal"
                 />
             </div>
+            {
+                props.updating ?
+                    <div className="row-center m-1">
+                        <TextField
+                            name="password"
+                            label="Senha"
+                            value={props.state.newMember.password}
+                            onChange={(e: any) => props.handleChange(e)}
+                            margin="normal"
+                            type="password"
+                        />
+                    </div>
+                :
+                    null
+            }
             <div className="row-center">
-                <Button onClick={(e: any) => props.postAddUser()} variant="contained" color="primary">
-                    CRIAR
-                </Button>
+                {
+                    props.updating ?
+                        <Button onClick={(e: any) => props.putUser()} variant="contained" color="primary">
+                            ATUALIZAR
+                        </Button>
+                    :
+                        <Button onClick={(e: any) => props.postAddUser()} variant="contained" color="primary">
+                            CRIAR
+                        </Button>
+                }
             </div>
             {props.state.failed ?
                 <div className="row-center">

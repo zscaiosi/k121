@@ -18,6 +18,7 @@ class MembersManager extends React.Component <any, any>{
 
         this.state = {
             members: [],
+            // If already logged in then exists in localStorage
             currentUser: JSON.parse(localStorage.getItem('k121data') || "{\"User\":{}}").User,
             newMember: {
                 name: '',
@@ -26,7 +27,9 @@ class MembersManager extends React.Component <any, any>{
                 role: 2,
                 domains: JSON.parse(localStorage.getItem('k121data') || "{\"User\":{}}").User.domains
             },
-            creating: false
+            creating: false,
+            updating: false,
+            removing: false
         };
     }
 
@@ -47,6 +50,7 @@ class MembersManager extends React.Component <any, any>{
     }
 
     fetchUsers(){
+        // Fetches all users for current domain
         axios({
             method: 'GET',
             url: `http://localhost:3003/users/findByDomain/${this.state.currentUser.domains[0]}`,
@@ -76,32 +80,36 @@ class MembersManager extends React.Component <any, any>{
     }
 
     postAddUser(){
-
-        axios({
-            method: 'POST',
-            url: `http://localhost:3003/users/register`,
-            data: {
-                name: this.state.newMember.name,
-                email: this.state.newMember.email,
-                password: this.state.newMember.password,
-                role: this.state.newMember.role,
-                domains: this.state.newMember.domains
-            },
-            headers: {
-                "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
-            }
-        }).then( (response: any) => {
-            this.setState({
-                creating: false
+        if (this.state.newMember.email.indexOf(".com") < 0 || this.state.newMember.email.indexOf("@") < 0) {
+            alert("E-mail inválido!!!");
+        } else {
+            axios({
+                method: 'POST',
+                url: `http://localhost:3003/users/register`,
+                data: {
+                    name: this.state.newMember.name,
+                    email: this.state.newMember.email,
+                    password: this.state.newMember.password,
+                    role: this.state.newMember.role,
+                    domains: this.state.newMember.domains
+                },
+                headers: {
+                    "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+                }
+            }).then( (response: any) => {
+                this.setState({
+                    creating: false
+                });
+                window.location.reload();
+            }).catch( (error: any) => {
+                alert('NOT CREATED: ' + JSON.stringify(error))
             });
-        }).catch( (error: any) => {
-            alert('NOT CREATED: ' + JSON.stringify(error))
-        });
+        }
         
     }
 
     postAddGame(){
-
+        // Creates and plays the game
         if (this.state.members && this.state.members.length % 2 !== 0) {
             alert("Participantes nâo formam pares!");
         } else {
@@ -118,11 +126,56 @@ class MembersManager extends React.Component <any, any>{
                 }
             }).then( (response: any) => {
                 alert("CRIADO! Verifique teu e-mail!");
+                window.location.reload();
             }).catch( (error: any) => {
                 alert('NOT CREATED: ' + JSON.stringify(error))
             });
         }
         
+    }
+
+    putUser(){
+        axios({
+            method: 'PUT',
+            url: `http://localhost:3003/users/update`,
+            data: {
+                _id: this.state.newMember._id,
+                name: this.state.newMember.name,
+                email: this.state.newMember.email,
+                password: this.state.newMember.password,
+                role: this.state.newMember.role,
+                domains: this.state.newMember.domains
+            },
+            headers: {
+                "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+            }
+        }).then( (response: any) => {
+            this.setState({
+                creating: false
+            });
+
+            window.location.reload();
+        }).catch( (error: any) => {
+            alert('NOT CREATED: ' + JSON.stringify(error))
+        });
+    }
+
+    removeUser(_id: string){
+        if (_id) {
+            axios({
+                method: 'DELETE',
+                url: `http://localhost:3003/users/remove/${_id}`,
+                headers: {
+                    "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+                }
+            }).then( (response: any) => {
+                window.location.reload();
+            }).catch( (error: any) => {
+                alert(JSON.stringify(error));
+            });
+        } else {
+            alert("Nâo selecionado!");
+        }
     }
 
     render(){
@@ -131,16 +184,18 @@ class MembersManager extends React.Component <any, any>{
                 <Paper>
                     <Typography variant="h5" >{ this.state.creating ? "Novo usuário" : "Lista de usuários" }</Typography>
                     {
-                        this.state.creating ?
-                            <AddForm state={this.state} handleChange={(e: any) => this.handleChange(e)} postAddUser={() => this.postAddUser()} />
+                        this.state.creating || this.state.updating ?
+                            <AddForm state={this.state} updating={this.state.updating} creating={this.state.creating} handleChange={(e: any) => this.handleChange(e)} postAddUser={() => this.postAddUser()} putUser={() => this.putUser()} />
                         :
 
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell>Inscritos</TableCell>
+                                    <TableCell align="right">#</TableCell>
+                                    <TableCell align="right">Inscritos</TableCell>
                                     <TableCell align="right">Grupo</TableCell>
+                                    <TableCell align="right">Alterar</TableCell>
+                                    <TableCell align="right">Remover</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -153,6 +208,11 @@ class MembersManager extends React.Component <any, any>{
                                         </TableCell>
                                         <TableCell align="right">{row.name}</TableCell>
                                         <TableCell align="right">{row.domains[0]}</TableCell>
+                                        <TableCell align="right"><Button onClick={(e: any) => this.setState({ updating: true, creating: false, newMember: {...this.state.members[index], password: ''} })} variant="contained" color="primary">Alterar Usuário</Button></TableCell>
+                                        <TableCell align="right"><Button onClick={(e: any) => {
+                                            this.setState({ removing: true, creating: false, updating: false });
+                                            this.removeUser(row._id);
+                                        }} variant="contained" color="primary">Remover Usuário</Button></TableCell>
                                     </TableRow>
                                 ))
                                 :

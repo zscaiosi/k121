@@ -120,6 +120,37 @@ router.get('/findByDomain/:domainId', (req, res) => {
     }
 });
 
+router.put('/update', (req, res) => {
+    if (!req.body && !req.body._id) {
+        res.status(400).json({ body: req.body });
+    } else {
+        // Creating salt
+        const salt = bcrypt.genSaltSync(10);
+
+        UsersModel.findOneAndUpdate({ _id: req.body._id }, {name: req.body.name, email: req.body.email, password: bcrypt.hashSync(req.body.password, salt)}, (error, result) => {
+            if (error) {
+                res.status(500).json({ error, result });
+            } else {
+                res.status(200).json({ updated: true, result });
+            }
+        });
+    }
+});
+
+router.delete('/remove/:userId', (req, res) => {
+    if (!req.params.userId) {
+        res.status(400).json({ params: req.params });
+    } else {
+        UsersModel.findOneAndRemove({ _id: req.params.userId }, (error, result) => {
+            if (error) {
+                res.status(500).json({ error, result });
+            } else {
+                res.status(200).json({ updated: true, result });
+            }
+        });
+    }    
+});
+
 module.exports = {
     findByEmailAndPassword,
     createUser,
