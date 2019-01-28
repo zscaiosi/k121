@@ -36,6 +36,17 @@ class MembersManager extends React.Component <any, any>{
             alert("!")
             return;
         }
+
+        this.fetchUsers();
+    }
+
+    componentDidUpdate(prevProps: any, prevState: any){
+        if (this.state.creating !== prevState.creating) {
+            this.fetchUsers();
+        }
+    }
+
+    fetchUsers(){
         axios({
             method: 'GET',
             url: `http://localhost:3003/users/findByDomain/${this.state.currentUser.domains[0]}`,
@@ -48,7 +59,7 @@ class MembersManager extends React.Component <any, any>{
             });
         }).catch( (error: any) => {
             alert('FETCH ERROR: \n' + JSON.stringify(error));
-        });
+        });        
     }
 
     handleChange(e: any){
@@ -91,22 +102,26 @@ class MembersManager extends React.Component <any, any>{
 
     postAddGame(){
 
-        axios({
-            method: 'POST',
-            url: `http://localhost:3003/games/create`,
-            data: {
-                subscribers: this.state.members.map( (sub: any) => sub._id),
-                pairs: [],
-                domain: this.state.currentUser.domains[0]
-            },
-            headers: {
-                "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
-            }
-        }).then( (response: any) => {
-            alert("CRIADO! Verifique teu e-mail!");
-        }).catch( (error: any) => {
-            alert('NOT CREATED: ' + JSON.stringify(error))
-        });
+        if (this.state.members && this.state.members.length % 2 !== 0) {
+            alert("Participantes nâo formam pares!");
+        } else {
+            axios({
+                method: 'POST',
+                url: `http://localhost:3003/games/create`,
+                data: {
+                    subscribers: this.state.members.map( (sub: any) => sub._id),
+                    pairs: [],
+                    domain: this.state.currentUser.domains[0]
+                },
+                headers: {
+                    "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+                }
+            }).then( (response: any) => {
+                alert("CRIADO! Verifique teu e-mail!");
+            }).catch( (error: any) => {
+                alert('NOT CREATED: ' + JSON.stringify(error))
+            });
+        }
         
     }
 

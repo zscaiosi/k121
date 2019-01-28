@@ -56,22 +56,22 @@ describe('Routes', function(){
 
     describe('Games Controllers', function(){
         
-        it('Shuld Create Game', function(done){
-            this.timeout(10000);
+        // it('Shuld Create Game', function(done){
+        //     this.timeout(10000);
 
-            gamesController.createGame({ subscribers: ["1548617028320u", ], domainId: 'amigo_secreto' }, (error, result) => {
-                assert.isNull(error);
-                done();
-            });
-        });
-        it('Should Find Game by domain', function(done){
-            this.timeout(10000);
+        //     gamesController.createGame({ subscribers: ["1548617028320u", "1548636066335u", "1548618176432u", "1548636255048u"], domainId: 'amigo_secreto' }, (error, result) => {
+        //         assert.isNull(error);
+        //         done();
+        //     });
+        // });
+        // it('Should Find Game by domain', function(done){
+        //     this.timeout(10000);
 
-            gamesController.findGameByDomainId('amigo_secreto', (error, result) => {
-                assert.isNull(error);
-                done();
-            });
-        });
+        //     gamesController.findGameByDomainId('amigo_secreto', (error, result) => {
+        //         assert.isNull(error);
+        //         done();
+        //     });
+        // });
 
         it('Should organize pairs', function(done){
             this.timeout(6000);

@@ -47,7 +47,7 @@ const createUser = (body, cb) => {
         if (!error)
             cb(null, { created: true });
         else
-            cb(500, { created: false });
+            cb(500, { created: false, error });
     });
 };
 

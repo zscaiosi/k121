@@ -9,7 +9,7 @@ const createGame = (body, cb) => {
         playedDate: null,
         subscribers: body.subscribers || [],
         pairs: [],
-        domain: body.domainId
+        domain: body.domain
     }, (error, _Game) => {
         if (error) {
             cb(500, { created: false, error });
@@ -32,16 +32,16 @@ const findGameByDomainId = (domainId, cb) => {
 
 const playGame = (domainId, cb) => {
     // First checks if matches all users, then make pairs
-    findGameByDomainId(domainId, (error, result) => {
+    findGameByDomainId(domainId, (error, games) => {
         
-        if (error || result.result.length < 1) {
-            cb(500, {result, error});
+        if (error || games.result[0].length < 1) {
+            cb(500, {error, msg: 'findGameByDomainId', games});
         } else {
-            if (result && result.result && result.result.subscribers && result.result.subscribers.length % 2 === 0) {
+            if (games && games.result[0] && games.result[0].subscribers && games.result[0].subscribers.length % 2 === 0) {
 
                 let pairs = [];
                 
-                result.result.subscribers.forEach((element, index, original) => {
+                games.result[0].subscribers.forEach((element, index, original) => {
 
                     if (index % 2 == 0 || index === 0) {
                         pairs = [...pairs, original.slice(index, index+2)];
@@ -50,15 +50,15 @@ const playGame = (domainId, cb) => {
                 });
                 
                 // Now updates the Game
-                GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()}, (error, result) => {
-                    if (!error || result.length > 0) {
-                        cb(null, result);
+                GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()}, (error, games) => {
+                    if (!error || games.length > 0) {
+                        cb(null, games);
                     } else {
-                        cb(error, result);
+                        cb(error, {error, msg: 'findOneAndUpdate', games});
                     }
                 });
             } else {
-                cb(400, { result, error: 'nâo é par!' });
+                cb(400, { games, error: 'nâo é par!' });
             }
 
         }
@@ -69,11 +69,11 @@ router.post('/create', (req, res) => {
     if (req.body) {
         createGame(req.body, (error, result) => {
             if (error) {
-                res.status(error).json(result);
+                res.status(error).json({error, msg: 'createGame', result});
             } else {
                 playGame(req.body.domain, (err, result) => {
                     if (err) {
-                        res.status(500).json(result);
+                        res.status(500).json({error, msg: 'playGame', result});
                     } else {
                         res.status(200).json(result);
                     }
