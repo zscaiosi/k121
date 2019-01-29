@@ -23,6 +23,13 @@ describe('Routes', function(){
                 done();
             });
         });
+        it('Should find user by id.', async function(){
+            this.timeout(6000);
+
+            const result = await usersControllers.findById('1548617028320u');
+
+            assert.isObject(result);
+        });
     });
 
     describe('Domains Controllers', function(){
@@ -30,7 +37,6 @@ describe('Routes', function(){
             this.timeout(6000);
 
             domainsController.findDomainByName('amigo_secreto', (error, result) => {
-                console.log(result)
                 assert.isNull(error);
                 done();
             });
@@ -55,6 +61,14 @@ describe('Routes', function(){
                 assert.isNull(error);
                 done();
             });
+        });
+
+        it('Should send email', async function(){
+            this.timeout(10000);
+
+            let result = await gamesController.asyncSendEmails(['1548617028320u', '1548715130582u']);
+
+            assert.isTrue(result);
         });
     });
 });

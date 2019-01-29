@@ -33,7 +33,6 @@ const findByEmailAndPassword = (body, cb) => {
 const createUser = (body, cb) => {
     // Creating salt
     const salt = bcrypt.genSaltSync(10);
-    console.log(body, salt)
     // Creating User
     UsersModel.create({
         _id: String(new Date().getTime()) + "u",
@@ -55,7 +54,6 @@ const fetchByDomain = (domainId, cb) => {
     UsersModel.find({ domains: {
         "$in": domainId
     } }, (error, result) => {
-        console.log(error, result)
         if (!error || result.length > 0) {
             cb(null, result);
         } else {
@@ -78,7 +76,6 @@ const findById = (_id) => {
 
 // ROUTES
 router.post('/register', (req, res) => {
-console.log(req.body)
     if (!req.body.email || !req.body.password || !req.body.name) {
         res.status(400).json({ created: false, error: 'bad JSON' });
     } else {
@@ -98,7 +95,6 @@ console.log(req.body)
 router.post('/login', (req, res) => {
     
     if (req.body === null || req.body === undefined) {
-        console.log(req.body)
         res.status(400).json({ body: req.body });
     }
     

@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const GamesModel = require('../models/Games');
 const {findById} = require('./usersController');
+const mailer = require('../models/Mailer');
+
 // Separeted functions for modularity's sake
 const createGame = (body, cb) => {
     GamesModel.create({
@@ -48,6 +50,16 @@ const playGame = (domainId, cb) => {
                     }
 
                 });
+                // Sends email for each pair
+                pairs.map( (pair, index) => {
+
+                    asyncSendEmails(pair).then( (res) => {
+
+                    }).catch( (err) => {
+                        console.log("ERRRORRR");
+                    });
+                    
+                });
                 
                 // Now updates the Game
                 GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()}, (error, games) => {
@@ -65,15 +77,19 @@ const playGame = (domainId, cb) => {
     });
 };
 
-async function asyncSendEmails(pairs){
-    let recipient = null;
+async function asyncSendEmails(pair){
+    // Gets both Users
+    let recipient1 = await findById(pair[0]);
+    let recipient2 = await findById(pair[1]);
+    console.log("RECIPIENTS: ", recipient1, recipient2);
+    // Sends e-mail
+    let mailResult1 = await mailer(recipient1.email, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + recipient2.name);
+    let mailResult2 = await mailer(recipient2.email, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + recipient1.name);
+    console.log("MAIL: ", mailResult1, mailResult2);
 
-    pairs.forEach((element, index, original) => {
-        //Avoids callbacks
-        recipient = await findById();
-        // Send e-mail to recipient
-    });
+    return mailResult1 && mailResult2;
 }
+
 // Routes
 router.post('/create', (req, res) => {
     if (req.body) {
@@ -113,5 +129,6 @@ module.exports = {
     createGame,
     findGameByDomainId,
     playGame,
+    asyncSendEmails,
     games: router
 };
