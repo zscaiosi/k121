@@ -39,7 +39,7 @@ async function asyncPlayGame(domainId){
         let updated = null;
         
         if (error || games.result[0].length < 1) {
-            cb(500, {error, games});
+            return { error, games};
         } else {
             if (games && games.result[0] && games.result[0].subscribers && games.result[0].subscribers.length % 2 === 0) {
 
@@ -52,11 +52,10 @@ async function asyncPlayGame(domainId){
                     }
 
                 });
-                console.log("formed pairs", pairs);
+                
                 sendEmails(pairs);
                 // Now updates the Game
                 updated = await GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()});
-                console.log("UPDATED GAME", updated);
                 
                 // Returns the results
                 return {emailSent, updated, error, games};
@@ -79,7 +78,6 @@ const sendEmails = (pairs) => {
                 sendTo = pairs[i][j-1];
             }
 
-            console.log(i, j, "Pair = ", pairs[i], "De para", pairs[i][j], sendTo)
             mailer(sendTo, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + pairs[i][j], (err, result) => {
                 // Does not stop process if fails, usually would log rejected e-mails
                 console.log("Loggin: ", pairs[i][j], "\n error: \n", {err, result});                   

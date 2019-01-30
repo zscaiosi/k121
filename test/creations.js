@@ -4,16 +4,17 @@ let domainsController = require('../src/controllers/domainsController');
 let gamesController = require('../src/controllers/gamesController');
 
 describe('Routes', function(){
-    describe('Users Controllers', function(){
-        it('Should create a user.', function(done){
-            this.timeout(6000);
+    // Should create the admin user and the domain on test
+    // describe('Users Controllers', function(){
+    //     it('Should create a user.', function(done){
+    //         this.timeout(6000);
 
-            usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '123456', name: 'Caio Saldanha', domains: ['amigo_secreto'] }, function(error, result){
-                assert.isNull(error);
-                done();
-            });
-        });
-    });
+    //         usersControllers.createUser({ email: 'zscaio.si@gmail.com', password: '123456', name: 'Caio Saldanha', domains: ['amigo_secreto'] }, function(error, result){
+    //             assert.isNull(error);
+    //             done();
+    //         });
+    //     });
+    // });
 
     // describe('Domains Controllers', function(){
     //     it('Should Create Domain', function(done){

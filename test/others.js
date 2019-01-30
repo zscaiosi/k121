@@ -23,13 +23,6 @@ describe('Routes', function(){
                 done();
             });
         });
-        it('Should find user by id.', async function(){
-            this.timeout(6000);
-
-            const result = await usersControllers.findById('1548617028320u');
-
-            assert.isObject(result);
-        });
     });
 
     describe('Domains Controllers', function(){
@@ -54,21 +47,12 @@ describe('Routes', function(){
             });
         });
 
-        it('Should organize pairs', function(done){
+        it('Should organize pairs', async function(){
             this.timeout(6000);
 
-            gamesController.asyncPlayGame('amigo_secreto', (error, result) => {
-                assert.isNull(error);
-                done();
-            });
-        });
-
-        it('Should send email', async function(){
-            this.timeout(10000);
-
-            let result = await gamesController.sendEmails(['1548617028320u', '1548715130582u']);
-
-            assert.isTrue(result);
+            let played = await gamesController.asyncPlayGame('amigo_secreto');
+console.log(played)
+            assert.isNotNull(played);
         });
     });
 });
