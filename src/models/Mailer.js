@@ -20,7 +20,7 @@ const Mailer = (recipient, subject, message, cb) => {
         subject: subject,
         html: `<p>${message}</p>`
     };
-    //return Promise
+    
     transporter.sendMail(mailOptions, (error, email) => {
         if (error)
             cb(500, { error, email });

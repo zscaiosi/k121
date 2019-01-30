@@ -30,7 +30,6 @@ const app = () => {
                         if (error)
                             res.status(401).send("bad auth - " + JSON.stringify(error) + JSON.stringify(claims));
                         else
-                            console.log('Auth cookies ', claims)
                             req.locals = {claims, current_user: User};
                             next();
                     });

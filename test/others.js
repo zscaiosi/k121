@@ -57,7 +57,7 @@ describe('Routes', function(){
         it('Should organize pairs', function(done){
             this.timeout(6000);
 
-            gamesController.playGame('amigo_secreto', (error, result) => {
+            gamesController.asyncPlayGame('amigo_secreto', (error, result) => {
                 assert.isNull(error);
                 done();
             });
@@ -66,7 +66,7 @@ describe('Routes', function(){
         it('Should send email', async function(){
             this.timeout(10000);
 
-            let result = await gamesController.asyncSendEmails(['1548617028320u', '1548715130582u']);
+            let result = await gamesController.sendEmails(['1548617028320u', '1548715130582u']);
 
             assert.isTrue(result);
         });

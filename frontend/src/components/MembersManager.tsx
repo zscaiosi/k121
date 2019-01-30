@@ -109,7 +109,7 @@ class MembersManager extends React.Component <any, any>{
     }
 
     postAddGame(){
-        // Creates and plays the game
+        // Creates the game
         if (this.state.members && this.state.members.length % 2 !== 0) {
             alert("Participantes nâo formam pares!");
         } else {
@@ -117,7 +117,7 @@ class MembersManager extends React.Component <any, any>{
                 method: 'POST',
                 url: `http://localhost:3003/games/create`,
                 data: {
-                    subscribers: this.state.members.map( (sub: any) => sub._id),
+                    subscribers: this.state.members.map( (sub: any) => sub.email),
                     pairs: [],
                     domain: this.state.currentUser.domains[0]
                 },
@@ -125,10 +125,26 @@ class MembersManager extends React.Component <any, any>{
                     "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
                 }
             }).then( (response: any) => {
-                alert("CRIADO! Verifique teu e-mail!");
-                window.location.reload();
+                // Now plays the game
+                axios({
+                    method: 'PUT',
+                    url: `http://localhost:3003/games/play`,
+                    data: {
+                        subscribers: this.state.members.map( (sub: any) => sub._id),
+                        pairs: [],
+                        domain: this.state.currentUser.domains[0]
+                    },
+                    headers: {
+                        "Authorization": (JSON.parse(localStorage.getItem("k121data") || "") || {token: ''}).token
+                    }
+                }).then( (response: any) => {
+                    alert("CRIADO! Verifique teu e-mail!");
+                    // window.location.reload();
+                }).catch( (error: any) => {
+                    alert('NOT PLAYED: ' + JSON.stringify(error));
+                });
             }).catch( (error: any) => {
-                alert('NOT CREATED: ' + JSON.stringify(error))
+                alert('NOT CREATED: ' + JSON.stringify(error));
             });
         }
         

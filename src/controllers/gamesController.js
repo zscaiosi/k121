@@ -32,12 +32,14 @@ const findGameByDomainId = (domainId, cb) => {
     });
 };
 
-const playGame = (domainId, cb) => {
+async function asyncPlayGame(domainId){
     // First checks if matches all users, then make pairs
-    findGameByDomainId(domainId, (error, games) => {
+    findGameByDomainId(domainId, async (error, games) => {
+        let emailSent = [];
+        let updated = null;
         
         if (error || games.result[0].length < 1) {
-            cb(500, {error, msg: 'findGameByDomainId', games});
+            cb(500, {error, games});
         } else {
             if (games && games.result[0] && games.result[0].subscribers && games.result[0].subscribers.length % 2 === 0) {
 
@@ -50,64 +52,64 @@ const playGame = (domainId, cb) => {
                     }
 
                 });
-                // Sends email for each pair
-                pairs.map( (pair, index) => {
-
-                    asyncSendEmails(pair).then( (res) => {
-
-                    }).catch( (err) => {
-                        console.log("ERRRORRR");
-                    });
-                    
-                });
-                
+                console.log("formed pairs", pairs);
+                sendEmails(pairs);
                 // Now updates the Game
-                GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()}, (error, games) => {
-                    if (!error || games.length > 0) {
-                        cb(null, games);
-                    } else {
-                        cb(error, {error, msg: 'findOneAndUpdate', games});
-                    }
-                });
+                updated = await GamesModel.findOneAndUpdate({ domain: domainId }, {played: true, pairs, playedDate: new Date()});
+                console.log("UPDATED GAME", updated);
+                
+                // Returns the results
+                return {emailSent, updated, error, games};
             } else {
-                cb(400, { games, error: 'nâo é par!' });
+                return {emailSent, updated, error, games};
             }
 
         }
     });
 };
 
-async function asyncSendEmails(pair){
-    // Gets both Users
-    let recipient1 = await findById(pair[0]);
-    let recipient2 = await findById(pair[1]);
-    console.log("RECIPIENTS: ", recipient1, recipient2);
-    // Sends e-mail
-    let mailResult1 = await mailer(recipient1.email, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + recipient2.name);
-    let mailResult2 = await mailer(recipient2.email, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + recipient1.name);
-    console.log("MAIL: ", mailResult1, mailResult2);
+const sendEmails = (pairs) => {
 
-    return mailResult1 && mailResult2;
-}
+    for(let i = 0; i < pairs.length; i++){
+        for(let j = 0; j < pairs[i].length; j ++){
+            let sendTo = '';
+            if ( j === 0 ) {
+                sendTo = pairs[i][j+1];
+            } else {
+                sendTo = pairs[i][j-1];
+            }
+
+            console.log(i, j, "Pair = ", pairs[i], "De para", pairs[i][j], sendTo)
+            mailer(sendTo, "Seu amigo secreto está definido!", "O seu amigo secreto é: " + pairs[i][j], (err, result) => {
+                // Does not stop process if fails, usually would log rejected e-mails
+                console.log("Loggin: ", pairs[i][j], "\n error: \n", {err, result});                   
+            });
+        }
+    }
+
+};
 
 // Routes
 router.post('/create', (req, res) => {
     if (req.body) {
         createGame(req.body, (error, result) => {
             if (error) {
-                res.status(error).json({error, msg: 'createGame', result});
+                res.status(error || 500).json({error, result});
             } else {
-                playGame(req.body.domain, (err, result) => {
-                    if (err) {
-                        res.status(500).json({error, msg: 'playGame', result});
-                    } else {
-                        res.status(200).json(result);
-                    }
-                });
+                res.status(200).json({ error, result });
             }
         });
     } else {
         res.status(400).json({ body });
+    }
+});
+
+router.put('/play', async (req, res) => {
+    try{
+        let result = await asyncPlayGame(req.body.domain);
+        res.status(200).json({ result });
+    }catch(exception){
+        res.status(500).json({ error: exception });
     }
 });
 
@@ -128,7 +130,7 @@ router.get('/find/:domainId', (req, res) => {
 module.exports = {
     createGame,
     findGameByDomainId,
-    playGame,
-    asyncSendEmails,
+    asyncPlayGame,
+    sendEmails,
     games: router
 };
